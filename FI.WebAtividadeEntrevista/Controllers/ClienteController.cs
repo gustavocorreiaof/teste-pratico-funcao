@@ -33,8 +33,10 @@ namespace WebAtividadeEntrevista.Controllers
                                       from error in item.Errors
                                       select error.ErrorMessage).ToList();
 
+                string errosSeparadosPorVirgula = string.Join(", ", erros);
+
                 Response.StatusCode = 400;
-                return Json(string.Join(Environment.NewLine, erros));
+                return Json(string.Join(Environment.NewLine, errosSeparadosPorVirgula));
             }
             else
             {
