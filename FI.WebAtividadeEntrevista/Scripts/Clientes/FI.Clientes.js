@@ -14,7 +14,8 @@ $(document).ready(function () {
                 "Estado": $(this).find("#Estado").val(),
                 "Cidade": $(this).find("#Cidade").val(),
                 "Logradouro": $(this).find("#Logradouro").val(),
-                "Telefone": $(this).find("#Telefone").val()
+                "Telefone": $(this).find("#Telefone").val(),
+                "CPF": $(this).find("#CPF").val()
             },
             error:
             function (r) {
@@ -30,7 +31,8 @@ $(document).ready(function () {
             }
         });
     })
-    
+
+    mascaraDeCPF();
 })
 
 function ModalDialog(titulo, texto) {
@@ -55,4 +57,22 @@ function ModalDialog(titulo, texto) {
 
     $('body').append(texto);
     $('#' + random).modal('show');
+}
+
+function mascaraDeCPF() {
+    $('#CPF').on('input', function () {
+        let value = $(this).val().replace(/\D/g, '');
+
+        value = value.substring(0, 11);
+
+        if (value.length > 9) {
+            value = value.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+        } else if (value.length > 6) {
+            value = value.replace(/(\d{3})(\d{3})(\d{1,3})/, '$1.$2.$3');
+        } else if (value.length > 3) {
+            value = value.replace(/(\d{3})(\d{1,3})/, '$1.$2');
+        }
+
+        $(this).val(value);
+    });
 }
