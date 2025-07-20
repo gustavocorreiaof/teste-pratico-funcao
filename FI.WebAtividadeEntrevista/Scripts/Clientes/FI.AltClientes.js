@@ -1,5 +1,7 @@
 ﻿
 $(document).ready(function () {
+    const idDoCampoPrincipal = 'CPF';
+
     if (obj) {
         $('#formCadastro #Nome').val(obj.Nome);
         $('#formCadastro #CEP').val(obj.CEP);
@@ -46,7 +48,10 @@ $(document).ready(function () {
             }
         });
     })
-    
+
+
+    mascaraDeCPF(idDoCampoPrincipal);
+    abreModalBeneficiarios();    
 })
 
 function ModalDialog(titulo, texto) {
