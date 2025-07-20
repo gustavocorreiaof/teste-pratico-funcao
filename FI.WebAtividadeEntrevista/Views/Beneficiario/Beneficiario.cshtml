@@ -27,11 +27,11 @@
                         <input type="text" class="form-control" id="NomeBeneficiario" placeholder="Ex.: Maria" />
                     </div>
                     <div class="form-group">
-                        <button type="button" style="margin-top: 24px" class="btn btn-success">Incluir</button>
+                        <button type="button" id="incluir" style="margin-top: 24px" class="btn btn-success">Incluir</button>
                     </div>
                 </form>
 
-                <!-- Grid de beneficiários - estático por hora -->
+                <!-- Grid de beneficiários -->
                 <table class="table table-striped table-hover" style="margin-top: 20px;">
                     <thead>
                         <tr>
@@ -40,23 +40,27 @@
                             <th>Ações</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <tr>
-                            <td>000.000.001-91</td>
-                            <td>Beneficiário João</td>
-                            <td>
-                                <button type="button" class="btn btn-primary btn-sm">Alterar</button>
-                                <button type="button" class="btn btn-danger btn-sm">Excluir</button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>000.000.002-72</td>
-                            <td>Beneficiário José</td>
-                            <td>
-                                <button type="button" class="btn btn-primary btn-sm">Alterar</button>
-                                <button type="button" class="btn btn-danger btn-sm">Excluir</button>
-                            </td>
-                        </tr>
+                    <tbody id="beneficiariosBody">
+                        @if (Model != null && Model.Any())
+                        {
+                            foreach (Beneficiario beneficiario in Model)
+                            {
+                                <tr>
+                                    <td>@beneficiario.CPF</td>
+                                    <td>@beneficiario.Nome</td>
+                                    <td>
+                                        <button type="button" class="btn btn-primary btn-sm">Alterar</button>
+                                        <button type="button" class="btn btn-danger btn-sm">Excluir</button>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="3">Nenhum beneficiário cadastrado.</td>
+                            </tr>
+                        }
                     </tbody>
                 </table>
 
@@ -70,3 +74,7 @@
         </div>
     </div>
 </div>
+
+<script>
+    var beneficiarios = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model));
+</script>
