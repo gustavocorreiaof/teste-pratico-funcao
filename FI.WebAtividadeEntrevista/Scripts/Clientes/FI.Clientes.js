@@ -1,5 +1,7 @@
 ﻿
 $(document).ready(function () {
+    const idDoCampoPrincipal = 'CPF';
+
     $('#formCadastro').submit(function (e) {
         e.preventDefault();
         $.ajax({
@@ -18,21 +20,22 @@ $(document).ready(function () {
                 "CPF": $(this).find("#CPF").val()
             },
             error:
-            function (r) {
-                if (r.status == 400)
-                    ModalDialog("Ocorreu um erro", r.responseJSON);
-                else if (r.status == 500)
+            function (response) {
+                if (response.status == 400)
+                    ModalDialog("Ocorreu um erro", response.responseJSON);
+                else if (response.status == 500)
                     ModalDialog("Ocorreu um erro", "Ocorreu um erro interno no servidor.");
             },
             success:
-            function (r) {
-                ModalDialog("Sucesso!", r)
+            function (response) {
+                ModalDialog("Sucesso!", response)
                 $("#formCadastro")[0].reset();
             }
         });
     })
 
-    mascaraDeCPF();
+    mascaraDeCPF(idDoCampoPrincipal);
+    abreModalBeneficiarios();
 })
 
 function ModalDialog(titulo, texto) {
@@ -59,8 +62,9 @@ function ModalDialog(titulo, texto) {
     $('#' + random).modal('show');
 }
 
-function mascaraDeCPF() {
-    $('#CPF').on('input', function () {
+function mascaraDeCPF(idDoCampo) {
+
+    $('#' + idDoCampo).on('input', function () {
         let value = $(this).val().replace(/\D/g, '');
 
         value = value.substring(0, 11);
@@ -75,4 +79,33 @@ function mascaraDeCPF() {
 
         $(this).val(value);
     });
+}
+
+function abreModalBeneficiarios() {
+    $('#beneficiario').on('click', function (e) {
+        var urlBeneficiarios = "/Cliente/Beneficiarios";
+
+        $.ajax({
+            url: urlBeneficiarios,
+            method: "POST",
+            data: {
+                CpfCliente: $('#CPF').val()
+            },
+            error:
+                function (response) {
+                    if (response.status == 400)
+                        ModalDialog("Ocorreu um erro", response.responseJSON);
+                    else if (response.status == 500)
+                        ModalDialog("Ocorreu um erro", "Ocorreu um erro interno no servidor.");
+                },
+            success:
+                function (response) {
+                    const idDoCpfDoModal = 'CpfBeneficiario';
+
+                    $('body').append(response);
+                    $('#modalBeneficiarios').modal('show');
+                    mascaraDeCPF(idDoCpfDoModal);
+                }
+        });
+    })
 }

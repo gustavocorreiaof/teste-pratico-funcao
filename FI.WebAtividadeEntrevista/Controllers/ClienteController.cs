@@ -26,7 +26,7 @@ namespace WebAtividadeEntrevista.Controllers
         public JsonResult Incluir(ClienteModel model)
         {
             BoCliente bo = new BoCliente();
-            
+
             if (!this.ModelState.IsValid)
             {
                 List<string> erros = (from item in ModelState.Values
@@ -47,7 +47,7 @@ namespace WebAtividadeEntrevista.Controllers
                 }
 
                 model.Id = bo.Incluir(new Cliente()
-                {                    
+                {
                     CEP = model.CEP,
                     Cidade = model.Cidade,
                     Email = model.Email,
@@ -60,7 +60,7 @@ namespace WebAtividadeEntrevista.Controllers
                     CPF = model.CPF
                 });
 
-           
+
                 return Json("Cadastro efetuado com sucesso");
             }
         }
@@ -69,7 +69,7 @@ namespace WebAtividadeEntrevista.Controllers
         public JsonResult Alterar(ClienteModel model)
         {
             BoCliente bo = new BoCliente();
-       
+
             if (!this.ModelState.IsValid)
             {
                 List<string> erros = (from item in ModelState.Values
@@ -101,7 +101,7 @@ namespace WebAtividadeEntrevista.Controllers
                     Telefone = model.Telefone,
                     CPF = model.CPF
                 });
-                               
+
                 return Json("Cadastro alterado com sucesso");
             }
         }
@@ -130,7 +130,7 @@ namespace WebAtividadeEntrevista.Controllers
                     CPF = cliente.CPF
                 };
 
-            
+
             }
 
             return View(model);
@@ -156,6 +156,22 @@ namespace WebAtividadeEntrevista.Controllers
 
                 //Return result to jTable
                 return Json(new { Result = "OK", Records = clientes, TotalRecordCount = qtd });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { Result = "ERROR", Message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        public ActionResult Beneficiarios(string cpfCliente)
+        {
+            try
+            {
+                BoBeneficiario bo = new BoBeneficiario();
+
+                List<Beneficiario> beneficiarios = bo.ListarBeneficiariosDeUmClientePorCpf(cpfCliente);
+                return PartialView("~/Views/Beneficiario/Beneficiario.cshtml", beneficiarios);
             }
             catch (Exception ex)
             {
