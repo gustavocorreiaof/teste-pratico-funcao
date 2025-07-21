@@ -41,7 +41,7 @@ namespace WebAtividadeEntrevista.Controllers
             }
             else
             {
-                if (bo.VerificarExistencia(model.CPF))
+                if (bo.VerificarExistencia(model.CPF, model.Id))
                 {
                     Response.StatusCode = 400;
                     return Json("Já existe um cliente cadastrado com o CPF informado.");
@@ -58,10 +58,10 @@ namespace WebAtividadeEntrevista.Controllers
                     Nome = model.Nome,
                     Sobrenome = model.Sobrenome,
                     Telefone = model.Telefone,
-                    CPF = model.CPF                    
+                    CPF = model.CPF
                 });
 
-                if(model.Beneficiarios != null && model.Beneficiarios.Any())
+                if (model.Beneficiarios != null && model.Beneficiarios.Any())
                 {
                     BoBeneficiario boBeneficiario = new BoBeneficiario();
 
@@ -96,7 +96,7 @@ namespace WebAtividadeEntrevista.Controllers
             }
             else
             {
-                if (bo.VerificarExistencia(model.CPF))
+                if (bo.VerificarExistencia(model.CPF, model.Id))
                 {
                     Response.StatusCode = 400;
                     return Json("Já existe um cliente cadastrado com o CPF informado.");
@@ -117,6 +117,34 @@ namespace WebAtividadeEntrevista.Controllers
                     CPF = model.CPF
                 });
 
+                if (model.Beneficiarios != null && model.Beneficiarios.Any())
+                {
+                    BoBeneficiario boBeneficiario = new BoBeneficiario();
+
+                    foreach (BeneficiarioModel beneficiario in model.Beneficiarios)
+                    {
+
+                        if (beneficiario.Id != null)
+                        {
+                            boBeneficiario.Alterar(new Beneficiario()
+                            {
+                                Id = beneficiario.Id.Value,
+                                Nome = beneficiario.Nome,
+                                CPF = beneficiario.CPF
+                            });
+                        }
+                        else
+                        {
+                            boBeneficiario.Incluir(new Beneficiario()
+                            {
+                                Nome = beneficiario.Nome,
+                                CPF = beneficiario.CPF,
+                                IdCliente = model.Id
+                            });
+                        }
+                    }
+                }
+
                 return Json("Cadastro alterado com sucesso");
             }
         }
@@ -127,6 +155,10 @@ namespace WebAtividadeEntrevista.Controllers
             BoCliente bo = new BoCliente();
             Cliente cliente = bo.Consultar(id);
             Models.ClienteModel model = null;
+
+            BoBeneficiario boBeneficiario = new BoBeneficiario();
+
+            List<Beneficiario> beneficiarios = boBeneficiario.ListarBeneficiariosDeUmClientePorCpf(cliente.CPF);
 
             if (cliente != null)
             {
@@ -142,10 +174,9 @@ namespace WebAtividadeEntrevista.Controllers
                     Nome = cliente.Nome,
                     Sobrenome = cliente.Sobrenome,
                     Telefone = cliente.Telefone,
-                    CPF = cliente.CPF
+                    CPF = cliente.CPF,
+                    Beneficiarios = BeneficiarioMapping(beneficiarios)
                 };
-
-
             }
 
             return View(model);
@@ -192,6 +223,16 @@ namespace WebAtividadeEntrevista.Controllers
             {
                 return Json(new { Result = "ERROR", Message = ex.Message });
             }
+        }
+
+        private List<BeneficiarioModel> BeneficiarioMapping(List<Beneficiario> beneficiarios)
+        {
+            return beneficiarios.Select(b => new BeneficiarioModel()
+            {
+                Id = b.Id,
+                Nome = b.Nome,
+                CPF = b.CPF
+            }).ToList();
         }
     }
 }

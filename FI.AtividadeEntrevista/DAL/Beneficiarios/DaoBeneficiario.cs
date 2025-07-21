@@ -71,7 +71,7 @@ namespace FI.AtividadeEntrevista.DAL.Beneficiarios
             List<SqlParameter> parametros = new List<SqlParameter>();
 
             parametros.Add(new SqlParameter("Nome", beneficiario.Nome));
-            parametros.Add(new SqlParameter("Nome", beneficiario.CPF));
+            parametros.Add(new SqlParameter("CPF", beneficiario.CPF));
             parametros.Add(new SqlParameter("ID", beneficiario.Id));
 
             base.Executar("FI_SP_AltBeneficiario", parametros);
