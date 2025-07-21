@@ -3,6 +3,12 @@
 
     $('#formCadastro').submit(function (e) {
         e.preventDefault();
+
+        var beneficiariosSemMascara = beneficiarios.map(beneficiario => ({
+            ...beneficiario,
+            CPF: removerCaracteresEspeciais(beneficiario.CPF)
+        }));
+
         $.ajax({
             url: urlPost,
             method: "POST",
@@ -16,8 +22,8 @@
                 "Cidade": $(this).find("#Cidade").val(),
                 "Logradouro": $(this).find("#Logradouro").val(),
                 "Telefone": $(this).find("#Telefone").val(),
-                "CPF": $(this).find("#CPF").val(),
-                "Beneficiarios": beneficiarios
+                "CPF": removerCaracteresEspeciais($(this).find("#CPF").val()),
+                "Beneficiarios": beneficiariosSemMascara
             },
             error:
             function (response) {
@@ -30,6 +36,7 @@
             function (response) {
                 ModalDialog("Sucesso!", response)
                 $("#formCadastro")[0].reset();
+                beneficiarios = [];
             }
         });
     })

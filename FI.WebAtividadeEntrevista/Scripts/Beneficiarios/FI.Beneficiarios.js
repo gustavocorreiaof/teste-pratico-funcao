@@ -7,7 +7,7 @@ const mensagens = {
 };
 
 function abreModalBeneficiarios() {
-    $('#beneficiario').on('click', function (e) {
+    $('#btnBeneficiarios').on('click', function (e) {
         var urlBeneficiarios = "/Cliente/Beneficiarios";
 
         $.ajax({
@@ -37,7 +37,7 @@ function abreModalBeneficiarios() {
 }
 
 function adicionarBeneficiario() {
-    $('#incluir').on('click', function () {
+    $('#incluir').off('click').on('click', function () {
         const cpf = $("#CpfBeneficiario").val();
         const nome = $("#NomeBeneficiario").val();
 
@@ -51,17 +51,28 @@ function adicionarBeneficiario() {
             return;
         }
 
-        if (cpfExiste(cpf)) {
-            alert(mensagens.cpfRepetido);
-            return;
-        }
+        var index = beneficiarios.findIndex(b => b.IdTemp === $('#CpfBeneficiario').data('idTemp'));
 
-        beneficiarios.push({
-            Id: null,
-            CPF: cpf,
-            Nome: nome,
-            IdCliente: 0
-        });
+        if (index === -1) {
+            if (beneficiarios.length > 0 && cpfExiste(cpf)) {
+                alert(mensagens.cpfRepetido);
+                return;
+            }
+
+            novoBeneficiario = {
+                IdTemp: Date.now(),
+                Id: null,
+                CPF: cpf,
+                Nome: nome,
+                IdCliente: 0
+            }
+
+            beneficiarios.push(novoBeneficiario);
+        }
+        else {
+            beneficiarios[index].CPF = cpf;
+            beneficiarios[index].Nome = nome;
+        }
 
         atualizarGrid();
         limparCampos();
@@ -69,7 +80,7 @@ function adicionarBeneficiario() {
 }
 
 function cpfExiste(cpf) {
-    return beneficiarios.some(b => b.cpf === cpf);
+    return beneficiarios.some(beneficiario => beneficiario.CPF === cpf);
 }
 
 function atualizarGrid() {
@@ -79,25 +90,29 @@ function atualizarGrid() {
     if (beneficiarios.length === 0) {
         $tbody.append("<tr><td colspan='3'>Nenhum beneficiário cadastrado.</td></tr>");
     } else {
-        beneficiarios.forEach(b => {
+        beneficiarios.forEach(beneficiario => {
             const linha = `
                         <tr>
-                            <td>${b.CPF}</td>
-                            <td>${b.Nome}</td>
+                            <td>${beneficiario.CPF}</td>
+                            <td>${beneficiario.Nome}</td>
                             <td>
-                                <button type="button" class="btn btn-primary btn-sm" data-id="${b.Id}">Alterar</button>
-                                <button class="btn btn-danger btn-sm btn-excluir" data-id="${b.Id}">Excluir</button>
+                                <button type="button" class="btn btn-primary btn-sm"  data-cpf="${beneficiario.cpf}"  data-id="${beneficiario.Id}" data-idTemp="${beneficiario.IdTemp}"">Alterar</button>
+                                <button class="btn btn-danger btn-sm btn-excluir"     data-cpf="${beneficiario.cpf}"  data-id="${beneficiario.Id}" data-idTemp="${beneficiario.IdTemp}"">Excluir</button>
                             </td>
                         </tr>
                     `;
             $tbody.append(linha);
         });
     }
+
+    alterarBeneficiario();
+    excluirBeneficiario()
 }
 
 function limparCampos() {
     $("#CpfBeneficiario").val("");
     $("#NomeBeneficiario").val("");
+    $("#CpfBeneficiario").val("").removeData("idTemp");
 }
 
 function validaCPF(cpf) {
@@ -124,4 +139,24 @@ function validaCPF(cpf) {
     if (segundoDigito >= 10) segundoDigito = 0;
 
     return digitos[10] === segundoDigito;
+}
+
+function alterarBeneficiario() {
+    $('#beneficiariosBody').on('click', '.btn-primary', function (event) {
+        var idTemp = Number(event.target.dataset.idtemp);
+        var beneficiario = beneficiarios.find(b => b.IdTemp === idTemp);
+
+        if (beneficiario) {
+            $('#CpfBeneficiario').val(beneficiario.CPF).data('idTemp', idTemp);
+            $('#NomeBeneficiario').val(beneficiario.Nome);
+        }
+    });
+}
+
+function excluirBeneficiario() {
+    $('#beneficiariosBody').on('click', '.btn-excluir', function (event) {
+        var idTemp = Number(event.target.dataset.idtemp);
+        beneficiarios = beneficiarios.filter(b => b.IdTemp !== idTemp);
+        atualizarGrid();
+    });
 }
