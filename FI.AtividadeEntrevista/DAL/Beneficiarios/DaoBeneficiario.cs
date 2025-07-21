@@ -56,7 +56,7 @@ namespace FI.AtividadeEntrevista.DAL.Beneficiarios
 
             parametros.Add(new SqlParameter("CpfCliente", cpfCliente));
 
-            DataSet ds = base.Consultar("ListarBeneficiariosDeUmClientePorCpf", parametros);
+            DataSet ds = base.Consultar("FI_SP_ListarBeneficiariosDeUmClientePorCpf", parametros);
             List<Beneficiario> cli = Converter(ds);
 
             return cli;

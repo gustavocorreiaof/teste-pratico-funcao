@@ -1,5 +1,5 @@
-﻿CREATE PROCEDURE ListarBeneficiariosDeUmClientePorCpf
-    @CpfCliente VARCHAR(14)
+﻿CREATE PROCEDURE FI_SP_ListarBeneficiariosDeUmClientePorCpf
+    @CpfCliente VARCHAR(11)
 AS
 BEGIN
     SET NOCOUNT ON;
