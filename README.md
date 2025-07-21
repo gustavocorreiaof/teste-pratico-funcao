@@ -1,6 +1,6 @@
 ## 🧪 Teste Prático - Desenvolvedor
 
-Repositório criado para o teste técnico da função Sistemas
+Repositório criado para o teste técnico da Função Sistemas
 
 ---
 
