@@ -85,8 +85,8 @@ function atualizarGrid() {
                             <td>${b.CPF}</td>
                             <td>${b.Nome}</td>
                             <td>
-                                <button type="button" class="btn btn-primary btn-sm" data-cpf="${b.CPF}">Alterar</button>
-                                <button class="btn btn-danger btn-sm btn-excluir" data-cpf="${b.CPF}">Excluir</button>
+                                <button type="button" class="btn btn-primary btn-sm" data-id="${b.Id}">Alterar</button>
+                                <button class="btn btn-danger btn-sm btn-excluir" data-id="${b.Id}">Excluir</button>
                             </td>
                         </tr>
                     `;
