@@ -175,7 +175,7 @@ namespace WebAtividadeEntrevista.Controllers
                     Sobrenome = cliente.Sobrenome,
                     Telefone = cliente.Telefone,
                     CPF = cliente.CPF,
-                    Beneficiarios = BeneficiarioMapping(beneficiarios)
+                    Beneficiarios = EntitiesToModels(beneficiarios)
                 };
             }
 
@@ -225,13 +225,13 @@ namespace WebAtividadeEntrevista.Controllers
             }
         }
 
-        private List<BeneficiarioModel> BeneficiarioMapping(List<Beneficiario> beneficiarios)
+        private List<BeneficiarioModel> EntitiesToModels(List<Beneficiario> beneficiarios)
         {
-            return beneficiarios.Select(b => new BeneficiarioModel()
+            return beneficiarios.Select(beneficiario => new BeneficiarioModel()
             {
-                Id = b.Id,
-                Nome = b.Nome,
-                CPF = b.CPF
+                Id = beneficiario.Id,
+                Nome = beneficiario.Nome,
+                CPF = beneficiario.CPF
             }).ToList();
         }
     }
