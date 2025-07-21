@@ -121,6 +121,16 @@ namespace WebAtividadeEntrevista.Controllers
                 {
                     BoBeneficiario boBeneficiario = new BoBeneficiario();
 
+                    List<Beneficiario> beneficiariosExistentes = boBeneficiario.ListarBeneficiariosDeUmClientePorCpf(model.CPF);
+
+                    foreach (Beneficiario beneficiarioExistente in beneficiariosExistentes)
+                    {
+                        if (!model.Beneficiarios.Any(b => b.Id == beneficiarioExistente.Id))
+                        {
+                            boBeneficiario.Excluir(beneficiarioExistente.Id);
+                        }
+                    }
+
                     foreach (BeneficiarioModel beneficiario in model.Beneficiarios)
                     {
 
@@ -135,12 +145,7 @@ namespace WebAtividadeEntrevista.Controllers
                         }
                         else
                         {
-                            boBeneficiario.Incluir(new Beneficiario()
-                            {
-                                Nome = beneficiario.Nome,
-                                CPF = beneficiario.CPF,
-                                IdCliente = model.Id
-                            });
+                            boBeneficiario.Incluir(new Beneficiario(beneficiario.CPF, beneficiario.Nome, model.Id));
                         }
                     }
                 }
@@ -174,7 +179,7 @@ namespace WebAtividadeEntrevista.Controllers
                     Nome = cliente.Nome,
                     Sobrenome = cliente.Sobrenome,
                     Telefone = cliente.Telefone,
-                    CPF = cliente.CPF,
+                    CPF = AplicarMascaraCPF(cliente.CPF),
                     Beneficiarios = EntitiesToModels(beneficiarios)
                 };
             }
@@ -210,14 +215,11 @@ namespace WebAtividadeEntrevista.Controllers
         }
 
         [HttpPost]
-        public ActionResult Beneficiarios(string cpfCliente)
+        public ActionResult ListarBeneficiariosDeUmCliente()
         {
             try
             {
-                BoBeneficiario bo = new BoBeneficiario();
-
-                List<Beneficiario> beneficiarios = bo.ListarBeneficiariosDeUmClientePorCpf(cpfCliente);
-                return PartialView("~/Views/Beneficiario/Beneficiario.cshtml", beneficiarios);
+                return PartialView("~/Views/Beneficiario/Beneficiario.cshtml");
             }
             catch (Exception ex)
             {
@@ -231,8 +233,13 @@ namespace WebAtividadeEntrevista.Controllers
             {
                 Id = beneficiario.Id,
                 Nome = beneficiario.Nome,
-                CPF = beneficiario.CPF
+                CPF = AplicarMascaraCPF(beneficiario.CPF)
             }).ToList();
+        }
+
+        private static string AplicarMascaraCPF(string cpf)
+        {
+            return Convert.ToUInt64(cpf).ToString(@"000\.000\.000\-00");
         }
     }
 }

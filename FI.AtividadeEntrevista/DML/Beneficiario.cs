@@ -5,6 +5,17 @@
     /// </summary>
     public class Beneficiario
     {
+        public Beneficiario(string cPF, string nome, long idCliente)
+        {
+            CPF = cPF;
+            Nome = nome;
+            IdCliente = idCliente;
+        }
+        public Beneficiario()
+        {
+            
+        }
+
         /// <summary>
         /// Id
         /// </summary>

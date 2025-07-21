@@ -8,14 +8,11 @@ const mensagens = {
 
 function abreModalBeneficiarios() {
     $('#btnBeneficiarios').on('click', function (e) {
-        var urlBeneficiarios = "/Cliente/Beneficiarios";
+        var urlBeneficiarios = "/Cliente/ListarBeneficiariosDeUmCliente";
 
         $.ajax({
             url: urlBeneficiarios,
             method: "POST",
-            data: {
-                CpfCliente: $('#CPF').val()
-            },
             error:
                 function (response) {
                     if (response.status == 400)
@@ -30,7 +27,9 @@ function abreModalBeneficiarios() {
                     $('body').append(response);
                     $('#modalBeneficiarios').modal('show');
                     mascaraDeCPF(idDoCpfDoModal);
-                    adicionarBeneficiario();
+                    inicializarFuncoes();
+
+                    defineIdParaCadaBeneficiario();
                 }
         });
     })
@@ -96,8 +95,8 @@ function atualizarGrid() {
                             <td>${beneficiario.CPF}</td>
                             <td>${beneficiario.Nome}</td>
                             <td>
-                                <button type="button" class="btn btn-primary btn-sm"  data-cpf="${beneficiario.cpf}"  data-id="${beneficiario.Id}" data-idTemp="${beneficiario.IdTemp}"">Alterar</button>
-                                <button class="btn btn-danger btn-sm btn-excluir"     data-cpf="${beneficiario.cpf}"  data-id="${beneficiario.Id}" data-idTemp="${beneficiario.IdTemp}"">Excluir</button>
+                                <button type="button" class="btn btn-primary btn-sm btn-alterar"  data-cpf="${beneficiario.cpf}"  data-id="${beneficiario.Id}" data-idTemp="${beneficiario.IdTemp}"">Alterar</button>
+                                <button class="btn btn-primary btn-sm btn-excluir"                data-cpf="${beneficiario.cpf}"  data-id="${beneficiario.Id}" data-idTemp="${beneficiario.IdTemp}"">Excluir</button>
                             </td>
                         </tr>
                     `;
@@ -142,7 +141,7 @@ function validaCPF(cpf) {
 }
 
 function alterarBeneficiario() {
-    $('#beneficiariosBody').on('click', '.btn-primary', function (event) {
+    $('#beneficiariosBody').on('click', '.btn-alterar', function (event) {
         var idTemp = Number(event.target.dataset.idtemp);
         var beneficiario = beneficiarios.find(b => b.IdTemp === idTemp);
 
@@ -159,4 +158,19 @@ function excluirBeneficiario() {
         beneficiarios = beneficiarios.filter(b => b.IdTemp !== idTemp);
         atualizarGrid();
     });
+}
+
+function inicializarFuncoes() {
+    adicionarBeneficiario()
+    alterarBeneficiario()
+    excluirBeneficiario()
+}
+
+function defineIdParaCadaBeneficiario() {
+    beneficiarios.forEach(b => {
+        if (!b.IdTemp) {
+            b.IdTemp = Number(Date.now().toString() + Math.floor(Math.random() * 1000));
+        }
+    });
+    atualizarGrid();
 }

@@ -1,8 +1,4 @@
-﻿@using FI.AtividadeEntrevista.DML;
-
-@model List<Beneficiario>
-
-<div class="modal fade" id="modalBeneficiarios" tabindex="-1" role="dialog" aria-labelledby="modalBeneficiariosLabel">
+﻿<div class="modal fade" id="modalBeneficiarios" tabindex="-1" role="dialog" aria-labelledby="modalBeneficiariosLabel">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
 
@@ -41,26 +37,6 @@
                         </tr>
                     </thead>
                     <tbody id="beneficiariosBody">
-                        @if (Model != null && Model.Any())
-                        {
-                            foreach (Beneficiario beneficiario in Model)
-                            {
-                                <tr>
-                                    <td>@beneficiario.CPF</td>
-                                    <td>@beneficiario.Nome</td>
-                                    <td>
-                                        <button type="button" class="btn btn-primary btn-sm" data-cpf="@beneficiario.CPF" data-id="@beneficiario.Id">Alterar</button>
-                                        <button type="button" class="btn btn-danger btn-sm"  data-cpf="@beneficiario.CPF" data-id="@beneficiario.Id">Excluir</button>
-                                    </td>
-                                </tr>
-                            }
-                        }
-                        else
-                        {
-                            <tr>
-                                <td colspan="3">Nenhum beneficiário cadastrado.</td>
-                            </tr>
-                        }
                     </tbody>
                 </table>
 
@@ -74,7 +50,3 @@
         </div>
     </div>
 </div>
-
-<script>
-    var beneficiarios = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model));
-</script>

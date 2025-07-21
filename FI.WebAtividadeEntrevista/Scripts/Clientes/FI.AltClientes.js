@@ -18,6 +18,11 @@ $(document).ready(function () {
 
     $('#formCadastro').submit(function (e) {
         e.preventDefault();
+
+        var beneficiariosSemMascara = beneficiarios.map(beneficiario => ({
+            ...beneficiario,
+            CPF: removerCaracteresEspeciais(beneficiario.CPF)
+        }));
         
         $.ajax({
             url: urlPost,
@@ -32,19 +37,19 @@ $(document).ready(function () {
                 "Cidade": $(this).find("#Cidade").val(),
                 "Logradouro": $(this).find("#Logradouro").val(),
                 "Telefone": $(this).find("#Telefone").val(),
-                "CPF": $(this).find("#CPF").val(),
-                "Beneficiarios": beneficiarios
+                "CPF": removerCaracteresEspeciais($(this).find("#CPF").val()),
+                "Beneficiarios": beneficiariosSemMascara
             },
             error:
-            function (r) {
-                if (r.status == 400)
-                    ModalDialog("Ocorreu um erro", r.responseJSON);
-                else if (r.status == 500)
+            function (response) {
+                if (response.status == 400)
+                    ModalDialog("Ocorreu um erro", response.responseJSON);
+                else if (response.status == 500)
                     ModalDialog("Ocorreu um erro", "Ocorreu um erro interno no servidor.");
             },
             success:
-            function (r) {
-                ModalDialog("Sucesso!", r)
+            function (response) {
+                ModalDialog("Sucesso!", response)
                 $("#formCadastro")[0].reset();                                
                 window.location.href = urlRetorno;
             }
